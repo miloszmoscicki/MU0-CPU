@@ -12,24 +12,24 @@ object IR : HardwareBlock() {
     private val PC_CONNECTION = 1
     private val ALU_CONNECTION = 2
     var currentState: IR_STATE = IR_STATE.NONE
-    var container: UShort = 0U
+    var container: Short = 0
 
     override fun posEdge(): Int {
         if(currentState == IR_STATE.MAR){
             container = read()
-            write(MAR_CONNECTION,(container.toInt() and 0x0FFF).toUShort())
+            write(MAR_CONNECTION,(container.toInt() and 0x0FFF).toShort())
             return container.toInt()
         }
         else if(currentState == IR_STATE.PC){
             val readVal = read().toInt()
             if(readVal == 1){
-                write(PC_CONNECTION, (container!!.toInt() and 0x0FFF).toUShort())
+                write(PC_CONNECTION, (container!!.toInt() and 0x0FFF).toShort())
             }
             return readVal
         }
         else{
             container = read()
-            write(ALU_CONNECTION, (container.toInt() and 0x0FFF).toUShort())
+            write(ALU_CONNECTION, (container.toInt() and 0x0FFF).toShort())
             return container.toInt()
         }
     }
@@ -44,10 +44,10 @@ object IR : HardwareBlock() {
     }
 
     fun getOpcode(): UShort {
-        return (buffer!!.toInt() shr 12).toUShort()
+        return (buffer!!.toUShort().toInt() shr 12).toUShort()
     }
 
-    fun getOperand(): UShort {
-        return (buffer!!.toInt() and 0x0FFF).toUShort()
+    fun getOperand(): Short {
+        return (buffer!!.toInt() and 0x0FFF).toShort()
     }
 }

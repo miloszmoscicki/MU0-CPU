@@ -3,13 +3,13 @@ package Sim
 import InputT
 import io.ktor.utils.io.core.*
 
-data class MemorySetupOutput @OptIn(ExperimentalUnsignedTypes::class) constructor(val compilationStatus: String, val memory: UShortArray, val firstLine: Int)
+data class MemorySetupOutput @OptIn(ExperimentalUnsignedTypes::class) constructor(val compilationStatus: String, val memory: ShortArray, val firstLine: Int)
 
 @ExperimentalUnsignedTypes
 class Preprocess(inputT: InputT) {
     var inputType = inputT
     @OptIn(ExperimentalUnsignedTypes::class)
-    private var memory = UShortArray(4096) { 0xDEADU }
+    private var memory = ShortArray(4096) { 0xDEAD.toShort() }
     private val labeledInstructions: List<String> = listOf("syscall","STO","ADD","LDW","MUL","SUB","JMP",
         "JNE","JGE","MUL","DIV", "AND", "OR")
 
@@ -28,7 +28,7 @@ class Preprocess(inputT: InputT) {
                     try {
                         dataLabelsMap = dataSectionSetup(dataAndText[0])
                     } catch (e: Exception) {
-                        return MemorySetupOutput(e.message.toString(), ushortArrayOf(), firstLine)
+                        return MemorySetupOutput(e.message.toString(), shortArrayOf(), firstLine)
                     }
 
                     val textLines = dataAndText[1].split("\n").toMutableList()
@@ -50,14 +50,14 @@ class Preprocess(inputT: InputT) {
 
                         if (!isValueLabel) {
                             try {
-                                textLines[index].split(" ")[1].toUShort()
+                                textLines[index].split(" ")[1].toShort()
                             } catch (e: NumberFormatException) {
                                 return MemorySetupOutput(
                                     "Compilation error line ${index + firstLine} , label '${
                                         element.split(
                                             " "
                                         )[1]
-                                    }' not found", ushortArrayOf(), firstLine
+                                    }' not found", shortArrayOf(), firstLine
                                 )
                             } catch (_: IndexOutOfBoundsException) {
 
@@ -67,11 +67,23 @@ class Preprocess(inputT: InputT) {
                     dataAndText[1] = textLines.joinToString("\n")
                     textSection = dataAndText[1]
                 }
+                else{
+                    return MemorySetupOutput(
+                        "Compilation error: wrong assembly syntax. Missing .text section.",
+                        shortArrayOf(), firstLine
+                    )
+                }
+            }
+            else{
+                return MemorySetupOutput(
+                    "Compilation error: wrong assembly syntax. Missing .data section.",
+                    shortArrayOf(), firstLine
+                )
             }
         }
 
         var counter = 0
-        val memList: List<UShort>
+        val memList: List<Short>
         try {
             memList = memStringToMemArr(textSection, firstLine)
             memList.forEach {
@@ -79,23 +91,23 @@ class Preprocess(inputT: InputT) {
                 counter += 1
             }
         } catch (e: Exception) {
-            return MemorySetupOutput(e.message.toString(), ushortArrayOf(), firstLine)
+            return MemorySetupOutput(e.message.toString(), shortArrayOf(), firstLine)
         }
         return MemorySetupOutput("OK", memory, firstLine)
     }
 
 
-    private fun memStringToMemArr(memInput: String, firstLine: Int): List<UShort>{
-        val memArr = mutableListOf<UShort>()
+    private fun memStringToMemArr(memInput: String, firstLine: Int): List<Short>{
+        val memArr = mutableListOf<Short>()
         when (inputType) {
             InputT.HEX -> {
                 memInput.split("\n").forEach {
-                    memArr.add(it.replace("0x","").toUShort(16))
+                    memArr.add(it.replace("0x","").toUShort(16).toShort())
                 }
             }
             InputT.BIN -> {
                 memInput.split("\n").forEach {
-                    memArr.add(it.toUShort(2))
+                    memArr.add(it.toUShort(2).toShort())
                 }
             }
             else -> {
@@ -112,7 +124,7 @@ class Preprocess(inputT: InputT) {
         return memArr
     }
 
-    private fun compileInstruction(instruction: String): UShort {
+    private fun compileInstruction(instruction: String): Short {
         val asArr = instruction.split(" ")
         val inst = asArr[0]
         var operand = ""
@@ -121,46 +133,49 @@ class Preprocess(inputT: InputT) {
         }
         when (inst) {
             "LDW" -> {
-                return (0x0000 or operand.toInt()).toUShort()
+                return (0x0000 or operand.toInt()).toShort()
             }
             "STO" ->{
-                return (0x1000 or operand.toInt()).toUShort()
+                return (0x1000 or operand.toInt()).toShort()
             }
             "ADD" ->{
-                return (0x2000 or operand.toInt()).toUShort()
+                return (0x2000 or operand.toInt()).toShort()
             }
             "SUB" ->{
-                return (0x3000 or operand.toInt()).toUShort()
+                return (0x3000 or operand.toInt()).toShort()
             }
             "JMP" ->{
-                return (0x4000 or operand.toInt()).toUShort()
+                return (0x4000 or operand.toInt()).toShort()
             }
             "JGE" -> {
-                return (0x5000 or operand.toInt()).toUShort()
+                return (0x5000 or operand.toInt()).toShort()
             }
             "JNE" ->{
-                return (0x6000 or operand.toInt()).toUShort()
+                return (0x6000 or operand.toInt()).toShort()
             }
             "STP" ->{
-                return (0x7000).toUShort()
+                return (0x7000).toShort()
             }
             "LDI" -> {
-                return (0x8000 or operand.toInt()).toUShort()
+                return (0x8000 or operand.toInt()).toShort()
             }
             "MUL" -> {
-                return (0x9000 or operand.toInt()).toUShort()
+                return (0x9000 or operand.toInt()).toShort()
             }
             "DIV" -> {
-                return (0xA000 or operand.toInt()).toUShort()
+                return (0xA000 or operand.toInt()).toShort()
             }
             "AND" -> {
-                return (0xB000 or operand.toInt()).toUShort()
+                return (0xB000 or operand.toInt()).toShort()
             }
             "OR" -> {
-                return (0xC000 or operand.toInt()).toUShort()
+                return (0xC000 or operand.toInt()).toShort()
             }
             "syscall" -> {
-                return (0xD000 or operand.toInt()).toUShort()
+                return (0xD000 or operand.toInt()).toShort()
+            }
+            "NOP" ->{
+                return (0xE000).toShort()
             }
 
             else ->{
@@ -200,17 +215,17 @@ class Preprocess(inputT: InputT) {
                             if(index % 2 == 0){
                                 when (index) {
                                     byteArray.size - 1 -> {
-                                        memory[currentWriteAddress] = (it.toUShort().toString(16) + "00").toUShort(16)
+                                        memory[currentWriteAddress] = (it.toShort().toString(16) + "00").toShort(16)
                                         currentWriteAddress += 1
                                     }
                                     byteArray.size - 2 -> {
-                                        memory[currentWriteAddress] = (it.toUShort().toString(16) + byteArray[index + 1].toUShort().toString(16)).toUShort(16)
+                                        memory[currentWriteAddress] = (it.toShort().toString(16) + byteArray[index + 1].toShort().toString(16)).toShort(16)
                                         currentWriteAddress += 1
-                                        memory[currentWriteAddress] = ("00").toUShort(16)
+                                        memory[currentWriteAddress] = ("00").toShort(16)
                                         currentWriteAddress += 1
                                     }
                                     else -> {
-                                        memory[currentWriteAddress] = (it.toUShort().toString(16) + byteArray[index + 1].toUShort().toString(16)).toUShort(16)
+                                        memory[currentWriteAddress] = (it.toShort().toString(16) + byteArray[index + 1].toShort().toString(16)).toShort(16)
                                         currentWriteAddress += 1
                                     }
                                 }
@@ -221,7 +236,7 @@ class Preprocess(inputT: InputT) {
                     "word" -> {
                         value.split(", ").forEach {
                             try {
-                                memory[currentWriteAddress] = it.toInt().toUShort()
+                                memory[currentWriteAddress] = it.toInt().toShort()
                             } catch (e: NumberFormatException){
                                 throw Exception("Value for label of type .word is not a number, line ${index + 1}")
                             }

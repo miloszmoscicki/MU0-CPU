@@ -12,7 +12,7 @@ import react.dom.onInput
 import styled.*
 
 @OptIn(ExperimentalUnsignedTypes::class)
-private var memoryContents = UShortArray(4096) { 0xDEADU }
+private var memoryContents = ShortArray(4096) { 0xDEAD.toShort() }
 private const val WORDS_PER_PAGE = 128
 private var currentMemoryPage = 1
 const val DIAGRAM_FONT_SIZE = 30
@@ -556,7 +556,7 @@ fun changeMemoryWindowPage(page: Int){
                 element.id = proceedWithZeros(4,((page0indexed -1) / 2).toString(16) + (i+7).toString(16) + (j-1).toString(16))
             }
 
-            val newCellValue = proceedWithZeros(4,memoryContents[element.id.toInt(16)].toString(16).uppercase())
+            val newCellValue = proceedWithZeros(4,memoryContents[element.id.toInt(16)].toUShort().toString(16).uppercase())
             if (!hasPageChanged)
             {
                 if(element.textContent != newCellValue){
@@ -576,14 +576,14 @@ fun changeMemoryWindowPage(page: Int){
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-fun setupMemoryContents(memoryInput: UShortArray){
+fun setupMemoryContents(memoryInput: ShortArray){
     memoryInput.forEachIndexed { index, element->
         memoryContents[index] = element
     }
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-fun updateMemoryWord(index: Int, value: UShort){
+fun updateMemoryWord(index: Int, value: Short){
     memoryContents[index] = value
 }
 
@@ -605,10 +605,10 @@ fun removeUpdateColoring() {
         }
     }
 }
-data class MemUpdate(var storeAddress: Int?, var storeValue: UShort?)
+data class MemUpdate(var storeAddress: Int?, var storeValue: Short?)
 
 @OptIn(ExperimentalUnsignedTypes::class)
-fun getFrontMemoryContents(): UShortArray {
+fun getFrontMemoryContents(): ShortArray {
     return memoryContents
 }
 
@@ -636,7 +636,7 @@ fun changeMemWindowVisibility(visibility: Boolean){
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun resetMemory(){
-    memoryContents = UShortArray(4096) { 0xDEADU }
+    memoryContents = ShortArray(4096) { 0xDEAD.toShort() }
 }
 
 

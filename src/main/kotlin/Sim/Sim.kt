@@ -1,7 +1,7 @@
 package Sim
 
 @ExperimentalUnsignedTypes
-class Sim(memory: UShortArray) {
+class Sim(memory: ShortArray) {
     var control: Control = Control(memory)
 
     fun runSimulation(): String {
@@ -34,7 +34,15 @@ class Sim(memory: UShortArray) {
     }
 
 
-    fun memoryWrite(index: Int, value: UShort){
+    fun memoryWrite(index: Int, value: Short){
         Memory.arr[index] = value
+    }
+
+    fun memoryRead(address: Int): Short{
+        return Memory.arr[address]
+    }
+
+    fun readAcc(): Short{
+        return ACC.data
     }
 }

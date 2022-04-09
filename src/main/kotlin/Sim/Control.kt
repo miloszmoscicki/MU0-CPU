@@ -29,7 +29,7 @@ enum class ACTION_BLOCK{
 }
 
 
-class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: UShortArray){
+class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: ShortArray){
 
     init {
         Memory.arr = mem
@@ -137,15 +137,15 @@ class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: UShortAr
             }
             4 -> {
                 retVal.log = ("${operandSaveForLogging} -> PC\n")
-                retVal.pcJump = ((operandSaveForLogging - (PC.content - 1u)).toInt())
+                retVal.pcJump = ((operandSaveForLogging - (PC.content - 1)).toInt())
                 retVal.processorStateChange.visitedComponents.addAll(jumpComponents)
                 retVal.processorStateChange.componentToReadValue = executeJump(ALU_OP.JMP)
 
             }
             5 -> {
-                if (ACC.data >= 0U) {
+                if (ACC.data >= 0) {
                     retVal.log = ("${operandSaveForLogging} -> PC\n")
-                    retVal.pcJump = ((operandSaveForLogging - (PC.content - 1u)).toInt())
+                    retVal.pcJump = ((operandSaveForLogging - (PC.content - 1)).toInt())
                 }else{
                     retVal.log = "NOP\n"
                 }
@@ -154,9 +154,9 @@ class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: UShortAr
 
             }
             6 -> {
-                if (ACC.data != 0U.toUShort()) {
+                if (ACC.data != 0.toShort()) {
                     retVal.log = ("${operandSaveForLogging} -> PC\n")
-                    retVal.pcJump = ((operandSaveForLogging - (PC.content - 1u)).toInt())
+                    retVal.pcJump = ((operandSaveForLogging - (PC.content - 1)).toInt())
                 }
                 else{
                     retVal.log = "NOP\n"
@@ -195,6 +195,9 @@ class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: UShortAr
             13 -> {
                executeSyscall(SyscallTypes.fromInt(ACC.data.toInt()), (IR.getOperand()))
                 retVal.log = ("syscall\n")
+            }
+            14 ->{
+                retVal.log = "NOP\n"
             }
             //other ones here
             else -> {
@@ -282,7 +285,7 @@ class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: UShortAr
         }
     }
 
-    private fun executeSyscall(type: SyscallTypes, arg: UShort){
+    private fun executeSyscall(type: SyscallTypes, arg: Short){
         when(type){
             SyscallTypes.PRINT_INT -> {
                 syscallPrintInt(arg)

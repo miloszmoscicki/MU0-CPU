@@ -3,7 +3,7 @@ package Sim
 abstract class HardwareBlock() {
 
     var outputConnection: MutableList<HardwareBlock> = mutableListOf()
-    var buffer: UShort? = null
+    var buffer: Short? = null
 
     abstract fun posEdge(): Int
 
@@ -21,13 +21,13 @@ abstract class HardwareBlock() {
     }
 
 
-    fun write(index: Int, data: UShort){
+    fun write(index: Int, data: Short){
         outputConnection[index].buffer = data
     }
 
-    fun read(): UShort {
+    fun read(): Short {
         if(buffer != null){
-            val copy = buffer as UShort
+            val copy = buffer as Short
             buffer = null
             return copy
         }

@@ -16,7 +16,7 @@ enum class ALU_OP {
 
 
 object ALU : HardwareBlock() {
-    var accData: UShort? = null
+    var accData: Short? = null
     var  currentOp: ALU_OP = ALU_OP.NONE
     private val ACC_CONNECTION = 0
 
@@ -32,22 +32,22 @@ object ALU : HardwareBlock() {
                     accData = read()
                     when(currentOp){
                         ALU_OP.JMP->{
-                            write(ACC_CONNECTION, 1U)
+                            write(ACC_CONNECTION, 1)
                     }
                         ALU_OP.JGE->{
-                        if(accData!! >=0U){
-                            write(ACC_CONNECTION, 1U)
+                        if(accData!! >=0){
+                            write(ACC_CONNECTION, 1)
                         }
                             else{
-                            write(ACC_CONNECTION, 0U)
+                            write(ACC_CONNECTION, 0)
                         }
 
                     }
                         ALU_OP.JNE->{
-                        if(accData!! != 0U.toUShort()){
-                            write(ACC_CONNECTION, 1U)
+                        if(accData!! != 0.toShort()){
+                            write(ACC_CONNECTION, 1)
                         }else{
-                            write(ACC_CONNECTION, 0U)
+                            write(ACC_CONNECTION, 0)
                         }
                     }
                     }
@@ -64,22 +64,22 @@ object ALU : HardwareBlock() {
                 val memoryWord = read()
                 when (currentOp){
                     ALU_OP.ADD->{
-                        write(ACC_CONNECTION,(accData!! + memoryWord).toUShort())
+                        write(ACC_CONNECTION,(accData!! + memoryWord).toShort())
                     }
                     ALU_OP.SUBSTRACT->{
-                        write(ACC_CONNECTION, (accData!! - memoryWord).toUShort())
+                        write(ACC_CONNECTION, (accData!! - memoryWord).toShort())
                     }
                     ALU_OP.MULTIPLY->{
-                        write(ACC_CONNECTION,(accData!! * memoryWord).toUShort())
+                        write(ACC_CONNECTION,(accData!! * memoryWord).toShort())
                     }
                     ALU_OP.DIVIDE->{
-                        write(ACC_CONNECTION, (accData!! / memoryWord).toUShort())
+                        write(ACC_CONNECTION, (accData!! / memoryWord).toShort())
                     }
                     ALU_OP.AND->{
-                        write(ACC_CONNECTION,(accData!!.toInt() and memoryWord.toInt()).toUShort())
+                        write(ACC_CONNECTION,(accData!!.toInt() and memoryWord.toInt()).toShort())
                     }
                     ALU_OP.OR->{
-                        write(ACC_CONNECTION,(accData!!.toInt() or memoryWord.toInt()).toUShort())
+                        write(ACC_CONNECTION,(accData!!.toInt() or memoryWord.toInt()).toShort())
                     }
 
                     else -> {

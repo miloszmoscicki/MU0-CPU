@@ -9,7 +9,7 @@ enum class ACC_STATE{
 
 
 object ACC : HardwareBlock() {
-    var data: UShort = 0U
+    var data: Short = 0
     private val MDR_CONNECTION = 0
     private val ALU_CONNECTION = 1
     var currentState: ACC_STATE = ACC_STATE.STORE
@@ -42,7 +42,7 @@ object ACC : HardwareBlock() {
     }
 
     override fun reset() {
-        data = 0U
+        data = 0
         currentState = ACC_STATE.STORE
         resetHardwareBlock()
     }

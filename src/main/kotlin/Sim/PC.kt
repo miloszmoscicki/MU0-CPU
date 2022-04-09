@@ -1,7 +1,7 @@
 package Sim
 
 object PC: HardwareBlock() {
-    var content: UShort = 0U
+    var content: Short = 0
     private const val MAR_CONNECTION = 0
 
     override fun posEdge(): Int {
@@ -9,7 +9,7 @@ object PC: HardwareBlock() {
             content = read()
         }
         write(MAR_CONNECTION, content)
-        content = (content + 1.toUShort()).toUShort()
+        content = (content + 1.toShort()).toShort()
         return content.toInt()
     }
 
@@ -18,7 +18,7 @@ object PC: HardwareBlock() {
     }
 
     override fun reset() {
-        content = 0U
+        content = 0
         resetHardwareBlock()
     }
 }

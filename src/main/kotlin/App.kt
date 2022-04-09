@@ -62,6 +62,7 @@ val app = fc<Props> {
         attrs.onDebugClick = { input ->
             removeSyscallLogs()
             resetMemory()
+            isFetchNext = true
             refreshMemoryWindow(1)
             logs = emptyList()
             lineSelectStepDebug = 1
@@ -254,8 +255,8 @@ private fun sendMemoryUpdate(){
                 if (proceedWithZeros(4,getFrontMemoryContents()[element.id.toInt(16)].toString(16)) != element.textContent!!){
                     try {
                         validateHexInput(element.textContent!!)
-                        updateMemoryWord(element.id.toInt(16), element.textContent!!.toUShort(16))
-                        simulator.updateSimulatorsMemory(element.id.toInt(16),element.textContent!!.toUShort(16))
+                        updateMemoryWord(element.id.toInt(16), element.textContent!!.toShort(16))
+                        simulator.updateSimulatorsMemory(element.id.toInt(16),element.textContent!!.toShort(16))
                     }
                     catch (ne: NumberFormatException)
                     {
@@ -278,7 +279,7 @@ private fun sendMemoryUpdate(){
         }
     }
 }
-fun syscallPrintInt(startAddress: UShort){
+fun syscallPrintInt(startAddress: Short){
     val mem = Memory.arr
     val hi = mem[startAddress.toInt()]
     val low = mem[startAddress.toInt() + 1]
@@ -295,7 +296,7 @@ fun syscallPrintInt(startAddress: UShort){
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-fun syscallPrintFloat(startAddress: UShort){
+fun syscallPrintFloat(startAddress: Short){
     val mem = Memory.arr
     val hi = mem[startAddress.toInt()]
     val low = mem[startAddress.toInt() + 1]
@@ -310,7 +311,7 @@ fun syscallPrintFloat(startAddress: UShort){
     loggerDiv.appendChild(p)
 }
 
-fun syscallPrintString(startAddress: UShort){
+fun syscallPrintString(startAddress: Short){
     var toPrint = ""
     var index = -1
     var firstByte = true
@@ -318,15 +319,15 @@ fun syscallPrintString(startAddress: UShort){
     val mem = Memory.arr
     for (i in startAddress.toInt() until mem.size){
 
-        if((mem[i].toInt() and 0xFF) == 0x00)
+        if((mem[i].toInt() and 0xFF00) == 0x00)
+        {
+            index = i - 1
+            break
+        }
+        else if((mem[i].toInt() and 0xFF) == 0x00)
         {
             index = i
             firstByte = false
-            break
-        }
-        else if((mem[i].toInt() and 0xFF00) == 0x00)
-        {
-            index = i
             break
         }
 
@@ -336,7 +337,7 @@ fun syscallPrintString(startAddress: UShort){
     }
 
     for (i in startAddress.toInt() .. index) {
-        if(i == index && firstByte){
+        if(i == index && !firstByte){
             val first = ((mem[i].toInt() and 0xFF00) shr 8)
             toPrint += first.toChar()
         }
@@ -399,12 +400,12 @@ fun buildDiagramWithValues(): String {
     return """
                         flowchart TB
                         %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f8f9fa', 'textColor': '${diagramLinkColor}', 'lineColor': '${diagramLinkColor}', 'fontSize': '${DIAGRAM_FONT_SIZE}px', 'fontFamily': 'Monospace'}}}%%
-    MDR[MDR\n0x${proceedWithZeros(4, componentToValue["MDR"]!!.toString(16).uppercase())}] 
-    IR[IR\n0x${proceedWithZeros(4, componentToValue["IR"]!!.toString(16).uppercase())}]
-    ACC[ACC\n0x${proceedWithZeros(4, componentToValue["ACC"]!!.toString(16).uppercase())}]
-    ALU[/ALU\n0x${proceedWithZeros(4, componentToValue["ALU"]!!.toString(16).uppercase())}\]
-    MAR[MAR\n0x${proceedWithZeros(4, componentToValue["MAR"]!!.toString(16).uppercase())}]
-    PC[PC\n0x${proceedWithZeros(4, componentToValue["PC"]!!.toString(16).uppercase())}]
+    MDR[MDR\n0x${proceedWithZeros(4, componentToValue["MDR"]!!.toUShort().toString(16).uppercase())}] 
+    IR[IR\n0x${proceedWithZeros(4, componentToValue["IR"]!!.toUShort().toString(16).uppercase())}]
+    ACC[ACC\n0x${proceedWithZeros(4, componentToValue["ACC"]!!.toUShort().toString(16).uppercase())}]
+    ALU[/ALU\n0x${proceedWithZeros(4, componentToValue["ALU"]!!.toUShort().toString(16).uppercase())}\]
+    MAR[MAR\n0x${proceedWithZeros(4, componentToValue["MAR"]!!.toUShort().toString(16).uppercase())}]
+    PC[PC\n0x${proceedWithZeros(4, componentToValue["PC"]!!.toUShort().toString(16).uppercase())}]
     CON[CONTROL UNIT]
     MEM[MEMORY]
 

@@ -1,7 +1,6 @@
 package Sim
 
 import InputT
-import kotlin.js.Console
 
 
 @ExperimentalUnsignedTypes
@@ -25,9 +24,17 @@ class Main(inputT: InputT){
         return preprocess.setupMemoryForRun(memString)
     }
 
-    fun prepareModelForDebug(memory: UShortArray) {
+    fun prepareModelForDebug(memory: ShortArray) {
         cpu = Sim(memory)
         cpu.setupSimulator()
+    }
+
+    fun peekMemoryWord(address: Int): Short{
+        return cpu.memoryRead(address)
+    }
+
+    fun peekAcc(): Short{
+        return cpu.readAcc()
     }
 
     fun stepDebug(): Control.InstructionEffect {
@@ -42,7 +49,7 @@ class Main(inputT: InputT){
         return cpu.stepExecuteCycle()
     }
 
-    fun updateSimulatorsMemory(index: Int, value: UShort){
+    fun updateSimulatorsMemory(index: Int, value: Short){
         cpu.memoryWrite(index,value)
     }
 
