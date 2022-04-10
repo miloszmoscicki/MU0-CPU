@@ -113,7 +113,9 @@ class Preprocess(inputT: InputT) {
             else -> {
                 memInput.split("\n").forEachIndexed { index, element ->
                     try {
-                        memArr.add(compileInstruction(element))
+                        if(element != ""){
+                            memArr.add(compileInstruction(element))
+                        }
                     }
                     catch (e: Exception){
                         throw Exception("Compilation error line ${firstLine + index} , no such instruction")

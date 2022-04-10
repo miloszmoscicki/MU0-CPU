@@ -28,7 +28,6 @@ external interface InputProps : Props {
 }
 
 val inputComponent = fc<InputProps> { props ->
-    document.execCommand("defaultParagraphSeparator", false, "div")
 
     window.onclick = {
         val target = it.target as HTMLElement
@@ -203,7 +202,14 @@ val inputComponent = fc<InputProps> { props ->
                         attrs.onPaste = {
                             it.preventDefault()
                             val text = it.clipboardData.getData("text/plain")
-                            window.document.execCommand("insertText", false, text)
+                            val lines = text.split("\n")
+                            lines.forEachIndexed { index, line ->
+                                window.document.execCommand("insertText", false, line)
+                                if(index != lines.size - 1){
+                                    window.document.execCommand("insertParagraph", false, "p")
+                                }
+                            }
+
                         }
 
                         css {
