@@ -34,7 +34,7 @@
         <li>Enter the program in the code editor.</li>
         <li>Click 🐞 button.</li>
         <li>Step instruction with ⤼ button.</li>
-        <li>Step cycle with
+        <li>Step cycle with 🔄 button. </li>
         <li>Investigate memory contents in the memory editor.</li>
     </ol>
     <h2>Investigating/Editing memory in debug mode</h2>
@@ -44,6 +44,11 @@
         <li>Edit memory by entering new word content in hexadecimal format and clicking the Update button.</li>
         <li>When memory word is updated by the processor a memory cell will highlight in red showing the new data.</li>
     </ul>
+    <h2>Investigating processor data flow.</li>
+        <ul>
+            <li>Step instruction/cycle in debug mode</li>
+            <li>Observe action performed by indivdual processor block and data flow between components</li>
+        </ul>
     <h2>Available instructions</h2>
     <p>The MU0 CPU allows for executing 16 different instructions. Currently implemented instructions are listed below.</p>
     <div class="bd-example">
@@ -108,22 +113,22 @@
             </tr>
             <tr>
                 <th scope="row">DIV &ltmemory_address&gt</th>
-                <td>0x10</td>
+                <td>0xA</td>
                 <td>Divides contents of ACC by a memory word at address defined in the operand, stores the result in ACC.</td>
             </tr>
             <tr>
                 <th scope="row">AND &ltmemory_address&gt</th>
-                <td>0x11</td>
+                <td>0xB</td>
                 <td>Performs a logical AND operation with contents of ACC and memory word at address defined in the operand, stores the result in ACC.</td>
             </tr>
             <tr>
                 <th scope="row">OR &ltmemory_address&gt</th>
-                <td>0x11</td>
+                <td>0xC</td>
                 <td>Performs a logical OR operation with contents of ACC and memory word at address defined in the operand, stores the result in ACC.</td>
             </tr>
             <tr>
                 <th scope="row">syscall &ltmemory_address&gt</th>
-                <td>0x12</td>
+                <td>0xD</td>
                 <td>Performs a syscall operation based on the contents of ACC:
                     <ul>
                        <li>
@@ -137,6 +142,11 @@
                         </li>
                     </ul>
                 </td>
+            </tr>
+            <tr>
+                <th scope="row">NOP</th>
+                <td>0xE</td>
+                <td>No action.</td>
             </tr>
             </tbody>
         </table>
