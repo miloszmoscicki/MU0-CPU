@@ -29,7 +29,7 @@ enum class ACTION_BLOCK{
 }
 
 
-class Control @OptIn(ExperimentalUnsignedTypes::class) constructor(mem: ShortArray){
+class Control constructor(mem: ShortArray){
 
     init {
         Memory.arr = mem

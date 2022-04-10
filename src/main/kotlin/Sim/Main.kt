@@ -3,7 +3,6 @@ package Sim
 import InputT
 
 
-@ExperimentalUnsignedTypes
 class Main(inputT: InputT){
     var inputType = inputT
     lateinit var cpu: Sim

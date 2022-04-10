@@ -1,7 +1,6 @@
 package Sim
 
 object Memory {
-    @OptIn(ExperimentalUnsignedTypes::class)
     var arr = ShortArray(4096) { 0xDEAD.toShort() }
     var addr: Short = 0
 

@@ -1,6 +1,5 @@
 package Sim
 
-@ExperimentalUnsignedTypes
 class Sim(memory: ShortArray) {
     var control: Control = Control(memory)
 

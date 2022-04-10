@@ -5,10 +5,8 @@ import io.ktor.utils.io.core.*
 
 data class MemorySetupOutput @OptIn(ExperimentalUnsignedTypes::class) constructor(val compilationStatus: String, val memory: ShortArray, val firstLine: Int)
 
-@ExperimentalUnsignedTypes
 class Preprocess(inputT: InputT) {
     var inputType = inputT
-    @OptIn(ExperimentalUnsignedTypes::class)
     private var memory = ShortArray(4096) { 0xDEAD.toShort() }
     private val labeledInstructions: List<String> = listOf("syscall","STO","ADD","LDW","MUL","SUB","JMP",
         "JNE","JGE","MUL","DIV", "AND", "OR")
