@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Represents possible IR states
+ */
 enum class IR_STATE {
     MAR,
     ALU,
@@ -7,6 +10,9 @@ enum class IR_STATE {
     NONE
 }
 
+/**
+ * Singleton IR class, inheriting from HardwareBlock
+ */
 object IR : HardwareBlock() {
     private val MAR_CONNECTION = 0
     private val PC_CONNECTION = 1
@@ -43,10 +49,16 @@ object IR : HardwareBlock() {
         resetHardwareBlock()
     }
 
+    /**
+     * @return the IR opcode
+     */
     fun getOpcode(): UShort {
         return (buffer!!.toUShort().toInt() shr 12).toUShort()
     }
 
+    /**
+     * @return the IR operand
+     */
     fun getOperand(): Short {
         return (buffer!!.toInt() and 0x0FFF).toShort()
     }

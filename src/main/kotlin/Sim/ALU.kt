@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Possible ALU operations
+ */
 enum class ALU_OP {
     ADD,
     SUBSTRACT,
@@ -14,7 +17,9 @@ enum class ALU_OP {
     NONE
 }
 
-
+/**
+ * Singleton ALU class, inheriting from HardwareBlock
+ */
 object ALU : HardwareBlock() {
     var accData: Short? = null
     var  currentOp: ALU_OP = ALU_OP.NONE
@@ -22,12 +27,17 @@ object ALU : HardwareBlock() {
 
     override fun posEdge(): Int {
         if(haveData()){
+            // if its the first of ALU reads for a paricular instruction
             if(accData == null){
+
+                // only need one read for LDI
                 if(currentOp == ALU_OP.LDI){
                     val readVal = read()
                     write(ACC_CONNECTION, readVal)
                     return readVal.toInt()
                 }
+
+                // for jump instructions need to pass information wether we should jump or not based on ACC value
                 else if(currentOp == ALU_OP.JNE || currentOp == ALU_OP.JGE || currentOp == ALU_OP.JMP){
                     accData = read()
                     when(currentOp){
@@ -55,14 +65,17 @@ object ALU : HardwareBlock() {
                     accData = null
                     return readVal
                 }
+                // for any other ALU operation save the value of acc
                 else {
                     accData = read()
                     return accData!!.toInt()
                 }
             }
+            // the second read for ALU instruction
             else{
                 val memoryWord = read()
                 when (currentOp){
+                    // compute and send back to ACC
                     ALU_OP.ADD->{
                         write(ACC_CONNECTION,(accData!! + memoryWord).toShort())
                     }

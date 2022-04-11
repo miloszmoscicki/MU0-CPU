@@ -11,13 +11,12 @@ import org.w3c.dom.*
 import react.dom.onInput
 import styled.*
 
-@OptIn(ExperimentalUnsignedTypes::class)
-private var memoryContents = ShortArray(4096) { 0xDEAD.toShort() }
-private const val WORDS_PER_PAGE = 128
-private var currentMemoryPage = 1
-const val DIAGRAM_FONT_SIZE = 30
+
 var diagramLinkColor = "#343a40"
 
+/**
+ * Operations that can be performed on the InputComponent
+ */
 external interface InputProps : Props {
     var onRunClick: (String) -> Unit
     var onSelect: (String) -> Unit
@@ -27,8 +26,10 @@ external interface InputProps : Props {
     var onMemoryUpdate: () -> Unit
 }
 
+// build the HTML
 val inputComponent = fc<InputProps> { props ->
 
+    // a little bit of a hack to take care of closing the settigns drop-down
     window.onclick = {
         val target = it.target as HTMLElement
         if(!target.matches(".dropdown-toggle")){
@@ -73,7 +74,6 @@ val inputComponent = fc<InputProps> { props ->
                         }
                     }
                     styledDiv {
-
                         css {
                             width = LinearDimension("75%")
                             display = Display.tableCell
@@ -108,7 +108,6 @@ val inputComponent = fc<InputProps> { props ->
                                 attrs.onClickFunction = {
                                     it.preventDefault()
                                     props.onDebugClick(getTextInEditor())
-                                    console.log("Trying to start simulator in debug mode")
                                 }
 
                             }
@@ -239,9 +238,6 @@ val inputComponent = fc<InputProps> { props ->
                                             }
                                         }
 
-                                        css {
-//                                        display = Display.tableCell
-                                        }
                                     }
                                     styledDiv {
                                         +"Selected word: "
@@ -314,7 +310,6 @@ val inputComponent = fc<InputProps> { props ->
                                                         (it.target as HTMLTableCellElement).id.uppercase()
                                                     )
                                                 }
-
                                                 css {
                                                     textAlign = TextAlign.left
                                                     padding = "4px"
@@ -383,7 +378,7 @@ val inputComponent = fc<InputProps> { props ->
             attrs.classes = setOf("mermaid")
             attrs.id = "diagram"
             +"""
-                %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f8f9fa', 'textColor': '${diagramLinkColor}', 'lineColor': '${diagramLinkColor}', 'fontSize': '${DIAGRAM_FONT_SIZE}px', 'fontFamily': 'Monospace'}}}%%
+                %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f8f9fa', 'textColor': '${diagramLinkColor}', 'lineColor': '${diagramLinkColor}', 'fontSize': '${Constants.DIAGRAM_FONT_SIZE}px', 'fontFamily': 'Monospace'}}}%%
                           flowchart TB
     MDR[MDR] 
     IR[IR]
@@ -416,6 +411,9 @@ val inputComponent = fc<InputProps> { props ->
     }
 }
 
+/**
+ *  Changes bootstrap classes and css properties from dark-mode to light-mode and vice-versa
+ */
 fun toggleColorMode() {
     val body = document.getElementById("main_body") as HTMLBodyElement
     val select = document.getElementById("inputTypeSelect") as HTMLSelectElement
@@ -483,16 +481,18 @@ fun getTextInEditor(): String {
     return div.innerText
 }
 
+/**
+ * Changes @param lineNumber from the editor to @param color
+ */
 fun changeColorOfALineInEditor(lineNumber: Int, color: String){
     val div = document.getElementById("textEditDiv1") as HTMLDivElement
+
+    // some hacks if contenteditable didnt add div tags on the same level
     if(lineNumber == 1){
         if(div.innerHTML.slice(0..3) != "<div") {
             div.style.color = color
             for (index in 0 until div.childElementCount) {
-//                val child = (div.children[index] as HTMLDivElement)
-
                 (div.children[index] as HTMLDivElement).style.color = if(isLightMode()) "black" else "white"
-
             }
         }
         else{
@@ -520,104 +520,6 @@ fun changeAllLinesToBlackInEditor(){
     }
 }
 
-@OptIn(ExperimentalUnsignedTypes::class)
-fun changeMemoryWindowPage(page: Int){
-    var hasPageChanged = true
-
-    if(currentMemoryPage == page){
-        hasPageChanged = false
-    }
-    else{
-        currentMemoryPage = page
-    }
-
-    val page0indexed = page - 1
-    val table = document.getElementById("memTable") as HTMLTableElement
-    // take care of the headers
-    val headerRow = table.children[0] as HTMLTableRowElement
-    for (headerRowChildIndex in 0 until headerRow.childElementCount){
-        if(headerRowChildIndex != 0){
-            val headerTd = headerRow.children[headerRowChildIndex] as HTMLTableCellElement
-            headerTd.textContent = proceedWithZeros(4,(headerRowChildIndex-1).toString(16).uppercase())
-            headerTd.style.color = if (isLightMode()) "black" else "white"
-        }
-    }
-
-    for (i in 1 until table.childElementCount){
-        val row = table.children[i] as HTMLTableRowElement
-
-        for (j in 0 until row.childElementCount){
-            val element = row.children[j] as HTMLTableCellElement
-            if(j == 0){
-                element.textContent = proceedWithZeros(4, (((i-1)*16) + page0indexed * (128)).toString(16).uppercase())
-                element.style.color = if (isLightMode()) "black" else "white"
-                continue
-            }
-
-            if(page0indexed%2==0){
-                element.id = proceedWithZeros(4,(page0indexed / 2).toString(16) + (i-1).toString(16) + (j-1).toString(16))
-            }
-            else
-            {
-                element.id = proceedWithZeros(4,((page0indexed -1) / 2).toString(16) + (i+7).toString(16) + (j-1).toString(16))
-            }
-
-            val newCellValue = proceedWithZeros(4,memoryContents[element.id.toInt(16)].toUShort().toString(16).uppercase())
-            if (!hasPageChanged)
-            {
-                if(element.textContent != newCellValue){
-                    element.style.color = "red"
-                }
-                else{
-                    element.style.color = if(isLightMode()) "black" else "white"
-                }
-            }
-            else{
-                element.style.color = if(isLightMode()) "black" else "white"
-            }
-            element.textContent = newCellValue
-        }
-
-    }
-}
-
-@OptIn(ExperimentalUnsignedTypes::class)
-fun setupMemoryContents(memoryInput: ShortArray){
-    memoryInput.forEachIndexed { index, element->
-        memoryContents[index] = element
-    }
-}
-
-@OptIn(ExperimentalUnsignedTypes::class)
-fun updateMemoryWord(index: Int, value: Short){
-    memoryContents[index] = value
-}
-
-fun changePageInput(page: Int){
-    (document.getElementById("range") as HTMLInputElement).value = page.toString()
-}
-
-fun getPageNumberForAddress(address: Int): Int{
-    return ((address / WORDS_PER_PAGE) + 1)
-}
-
-fun removeUpdateColoring() {
-    val table = document.getElementById("memTable") as HTMLTableElement
-    for (i in 1 until table.childElementCount) {
-        val row = table.children[i] as HTMLTableRowElement
-        for (j in 1 until row.childElementCount) {
-            val element = row.children[j] as HTMLTableCellElement
-            element.style.color = if(isLightMode()) "black" else "white"
-        }
-    }
-}
-data class MemUpdate(var storeAddress: Int?, var storeValue: Short?)
-
-@OptIn(ExperimentalUnsignedTypes::class)
-fun getFrontMemoryContents(): ShortArray {
-    return memoryContents
-}
-
 fun changeMemWindowVisibility(visibility: Boolean){
     val memDiv = document.getElementById("memoryDiv") as HTMLDivElement
     val stepBtn = document.getElementById("stepSubmit") as HTMLInputElement
@@ -640,31 +542,5 @@ fun changeMemWindowVisibility(visibility: Boolean){
 }
 
 
-@OptIn(ExperimentalUnsignedTypes::class)
-fun resetMemory(){
-    memoryContents = ShortArray(4096) { 0xDEAD.toShort() }
-}
 
-
-fun scrollToLine(lineNum: Int){
-    val div = document.getElementById("textEditDiv1") as HTMLDivElement
-    if(lineNum == 1){
-        if(div.innerHTML.slice(0..3) != "<div") {
-            div.scrollIntoView()
-        }
-        else{
-            val toChange = div.childNodes[0] as HTMLDivElement
-            toChange.scrollIntoView()
-        }
-    }
-    else{
-        val toChange = div.childNodes[lineNum-1] as HTMLDivElement
-        toChange.scrollIntoView()
-    }
-}
-
-fun showMemoryCellAsChanged(address: Int){
-    val td = document.getElementById(proceedWithZeros(4,address.toString(16))) as HTMLTableCellElement
-    td.style.color = "red"
-}
 

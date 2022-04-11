@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Singleton MAR class, inheriting from HardwareBlock
+ */
 object MAR: HardwareBlock() {
     var memoryConnection = Memory
 

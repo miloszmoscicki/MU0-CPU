@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Represents the cpu simulator with the operations that can be performed
+ */
 class Sim(memory: ShortArray) {
     var control: Control = Control(memory)
 

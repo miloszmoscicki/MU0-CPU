@@ -1,3 +1,6 @@
+/**
+ * Different types of program input in the editor
+ */
 enum class InputT(val key: String){
     HEX("HEX"),
     ASM("ASM"),

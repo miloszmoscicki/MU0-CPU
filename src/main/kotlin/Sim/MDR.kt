@@ -1,12 +1,17 @@
 package Sim
 
+/**
+ * Represents the state MDR is in
+ */
 enum class MDR_STATE{
     FETCH,
     STORE,
     LOAD,
     ALU_OP
 }
-
+/**
+ * Singleton MDR class, inheriting from HardwareBlock
+ */
 object MDR: HardwareBlock() {
     private val IR_CONNECTION = 0
     private val ACC_CONNECTION = 2
@@ -23,6 +28,7 @@ object MDR: HardwareBlock() {
 
     override fun negEdge(): Int {
         val fetchVal = memoryConnection.fetchMem()
+        // based on the current state decide which block to send the fetched memory word
         when (currentState)
         {
             MDR_STATE.FETCH->{

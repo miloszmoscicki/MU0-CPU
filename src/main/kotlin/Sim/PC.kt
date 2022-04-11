@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Singleton PC class, inheriting from HardwareBlock
+ */
 object PC: HardwareBlock() {
     var content: Short = 0
     private const val MAR_CONNECTION = 0

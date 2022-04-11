@@ -14,6 +14,9 @@ import styled.css
 import styled.styledDiv
 import kotlin.js.Console
 
+/**
+ * Defines actions to be performed on editing the logger list
+ */
 external interface LoggerProps : Props {
     var logs: List<String>
 }

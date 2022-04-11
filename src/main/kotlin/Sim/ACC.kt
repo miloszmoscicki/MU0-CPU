@@ -1,5 +1,8 @@
 package Sim
 
+/**
+ * Represents the state ACC block is in
+ */
 enum class ACC_STATE{
     STORE,
     LOAD,
@@ -7,7 +10,9 @@ enum class ACC_STATE{
     JUMP
 }
 
-
+/**
+ * Singleton ACC class, inheriting from HardwareBlock
+ */
 object ACC : HardwareBlock() {
     var data: Short = 0
     private val MDR_CONNECTION = 0
