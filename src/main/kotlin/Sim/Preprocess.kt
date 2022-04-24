@@ -6,7 +6,7 @@ import io.ktor.utils.io.core.*
 /**
  * Describes the information returned by preprocessing
  */
-data class MemorySetupOutput @OptIn(ExperimentalUnsignedTypes::class) constructor(val compilationStatus: String, val memory: ShortArray, val firstLine: Int)
+data class MemorySetupOutput constructor(val compilationStatus: String, val memory: ShortArray, val firstLine: Int)
 
 /**
  * Defines the actions happening at preprocess and compile stage of simulation

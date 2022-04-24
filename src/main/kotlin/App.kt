@@ -193,21 +193,21 @@ private fun sendMemoryUpdate(){
             val element = row.children[j] as HTMLTableCellElement
             if (element.textContent != null) {
                 // there has been an update
-                if (proceedWithZeros(4,getFrontMemoryContents()[element.id.toInt(16)].toString(16)) != element.textContent!!){
+                if (proceedWithZeros(4,getFrontMemoryContents()[element.id.toInt(16)].toUShort().toString(16)).uppercase() != element.textContent!!){
                     try {
                         validateHexInput(element.textContent!!)
-                        updateMemoryWord(element.id.toInt(16), element.textContent!!.toShort(16))
-                        simulator.updateSimulatorsMemory(element.id.toInt(16),element.textContent!!.toShort(16))
+                        updateMemoryWord(element.id.toInt(16), element.textContent!!.toUShort(16).toShort())
+                        simulator.updateSimulatorsMemory(element.id.toInt(16),element.textContent!!.toUShort(16).toShort())
                     }
                     catch (ne: NumberFormatException)
                     {
                         window.alert("Input (${element.textContent}) is not hexadecimal")
-                        element.textContent = proceedWithZeros(4, getFrontMemoryContents()[element.id.toInt(16)].toString(16)).uppercase()
+                        element.textContent = proceedWithZeros(4, getFrontMemoryContents()[element.id.toInt(16)].toUShort().toString(16)).uppercase()
                     }
                     catch (iae: IllegalArgumentException)
                     {
                         window.alert("Input (${element.textContent}) is more than word size")
-                        element.textContent = proceedWithZeros(4, getFrontMemoryContents()[element.id.toInt(16)].toString(16)).uppercase()
+                        element.textContent = proceedWithZeros(4, getFrontMemoryContents()[element.id.toInt(16)].toUShort().toString(16)).uppercase()
                     }
 
                 }

@@ -1,7 +1,7 @@
 package Sim
 
 /**
- * Abstract class describing capability ofa HardwareBlock
+ * Abstract class describing capability of a HardwareBlock
  */
 abstract class HardwareBlock() {
 
@@ -10,7 +10,7 @@ abstract class HardwareBlock() {
     var buffer: Short? = null
 
     /**
-     * Called on positiveEdge of the processor clock
+     * Called on positive edge of the processor clock
      */
     abstract fun posEdge(): Int
 

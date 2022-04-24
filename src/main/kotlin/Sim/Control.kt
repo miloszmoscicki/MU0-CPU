@@ -120,7 +120,7 @@ class Control constructor(mem: ShortArray){
     }
 
     /**
-     * Describes the effect of an isntruction
+     * Describes the effect of an instruction
      */
     data class InstructionEffect(var log:String, var pcJump: Int, val memUpdate: MemUpdate, val processorStateChange: ProcessorStateChange)
 
