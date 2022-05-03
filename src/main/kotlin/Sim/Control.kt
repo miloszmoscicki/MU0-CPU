@@ -314,7 +314,6 @@ class Control constructor(mem: ShortArray){
         componentToReadValue["MAR"] = MAR.posEdge()
         MDR.currentState = MDR_STATE.LOAD
         ACC.currentState = ACC_STATE.LOAD
-        MDR.negEdge()
         componentToReadValue["MDR"] = MDR.negEdge()
         return componentToReadValue
     }

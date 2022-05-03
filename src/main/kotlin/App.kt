@@ -105,7 +105,7 @@ fun buildDiagram(mermaidText: String){
 }
 
 /**
- * Displays a animation with Mermaid diagrams representing the actions performed by the CPU during a cycle
+ * Displays an animation with Mermaid diagrams representing the actions performed by the CPU during a cycle
  * @param processorStateChange the state of the processor after a single cycle
  * @param secondProcessorStateChange optional state of the processor after a second cycle
  */

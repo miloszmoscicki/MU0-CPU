@@ -26,6 +26,8 @@ external interface InputProps : Props {
     var onMemoryUpdate: () -> Unit
 }
 
+
+
 // build the HTML
 val inputComponent = fc<InputProps> { props ->
 
@@ -40,7 +42,6 @@ val inputComponent = fc<InputProps> { props ->
 
         }
     }
-
     styledDiv {
         attrs.id = "mainLeftRightDiv"
         styledDiv {
@@ -208,7 +209,6 @@ val inputComponent = fc<InputProps> { props ->
                                     window.document.execCommand("insertParagraph", false, "p")
                                 }
                             }
-
                         }
 
                         css {
