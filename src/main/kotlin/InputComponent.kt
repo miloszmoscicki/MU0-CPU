@@ -53,6 +53,7 @@ val inputComponent = fc<InputProps> { props ->
                         styledSelect {
                             attrs.id = "inputTypeSelect"
                             attrs.classes = setOf("custom-select")
+                            attrs.title = "Select input type"
                             option {
                                 +"Assembly"
                             }
@@ -86,10 +87,10 @@ val inputComponent = fc<InputProps> { props ->
                                 attrs.classes = setOf("btn btn-light")
                                 attrs.id = "runInput"
                                 attrs.value = "▶"
+                                attrs.title = "Run"
                                 attrs.onClickFunction = {
                                     it.preventDefault()
                                     props.onRunClick(getTextInEditor())
-                                    console.log("Trying to start simulator")
                                 }
                                 css {
                                     color = Color.green
@@ -105,6 +106,7 @@ val inputComponent = fc<InputProps> { props ->
                             styledInput(InputType.button) {
                                 attrs.classes = setOf("btn btn-light")
                                 attrs.value = "\uD83D\uDC1E"
+                                attrs.title = "Run with debug"
                                 attrs.id = "debugInput"
                                 attrs.onClickFunction = {
                                     it.preventDefault()
@@ -128,6 +130,7 @@ val inputComponent = fc<InputProps> { props ->
                                 attrs["data-toggle"] = "dropdown"
                                 attrs["aria-haspopup"] = "true"
                                 attrs["aria-expanded"] = "false"
+                                attrs.title = "Settings"
                                 attrs.onClickFunction = {
                                     val dropdownDiv = document.getElementById("dropdowndiv") as HTMLDivElement
                                     dropdownDiv.classList.toggle("show")
@@ -343,6 +346,7 @@ val inputComponent = fc<InputProps> { props ->
                     attrs.id = "stepSubmit"
                     attrs.classes = setOf("btn btn-light")
                     attrs.value = "\u293C"
+                    attrs.title = "Step instruction"
                     attrs.onClickFunction = {
                         it.preventDefault()
                         props.onStep()
@@ -357,7 +361,7 @@ val inputComponent = fc<InputProps> { props ->
                         attrs.id = "cycleStepSubmit"
                         attrs.classes = setOf("btn btn-light")
                         attrs.value = "\uD83D\uDD04"
-
+                        attrs.title = "Step single cycle"
                         attrs.onClickFunction = {
                             it.preventDefault()
                             props.onCycleStep()
